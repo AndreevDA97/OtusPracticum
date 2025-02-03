@@ -1,0 +1,6 @@
+services:
+  otuspracticum:
+    image: ${DOCKER_REGISTRY-}otuspracticum
+    build:
+      context: .
+      dockerfile: OtusPracticum/Dockerfile

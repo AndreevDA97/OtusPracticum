@@ -1,6 +1,38 @@
 services:
   otuspracticum:
-    image: ${DOCKER_REGISTRY-}otuspracticum
+    container_name: otuspracticum_app
+    image: ${DOCKER_REGISTRY-}otuspracticum:latest
     build:
       context: .
       dockerfile: OtusPracticum/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - app-network
+    depends_on:
+      - postgres_db
+    restart: always
+
+  postgres_db:
+    container_name: otuspracticum_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8fSnWajO5G
+      POSTGRES_DB: otuspracticum
+    ports:
+      - "5432:5432"
+    networks: 
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgressql/data
+    restart: always
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -18,6 +18,7 @@ services:
   postgres_db:
     container_name: otuspracticum_postgres
     image: postgres:latest
+    command: -c 'max_connections=1000'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 8fSnWajO5G

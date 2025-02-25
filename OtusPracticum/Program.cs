@@ -52,7 +52,7 @@ namespace OtusPracticum
                 });
                 o.OperationFilter<SecurityRequirementFilter>(JwtBearerDefaults.AuthenticationScheme);
             });
-            builder.Services.AddSingleton<NpgsqlService>();
+            builder.Services.AddScoped<NpgsqlService>();
             builder.Services.AddTransient<UserService>();
             var app = builder.Build();
             app.UseSwagger();

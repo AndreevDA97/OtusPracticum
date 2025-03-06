@@ -59,11 +59,11 @@ namespace OtusPracticum.Services
         {
             var query = @"create table if not exists public.""Users"" (
                         ""User_id"" uuid NOT NULL,
-                        ""First_name"" varchar(30) NOT NULL,
-                        ""Second_name"" varchar(30) NOT NULL,
+                        ""First_name"" varchar(50) NOT NULL,
+                        ""Second_name"" varchar(50) NOT NULL,
                         ""Birthdate"" varchar(11) NOT NULL,
                         ""Biography"" varchar(1000) NOT NULL,
-                        ""City"" varchar(30) NOT NULL,
+                        ""City"" varchar(50) NOT NULL,
                         ""Password"" varchar(255) NOT NULL,
                         constraint ""PK_Users"" PRIMARY KEY (""User_id"")
                     )";

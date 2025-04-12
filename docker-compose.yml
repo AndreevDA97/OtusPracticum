@@ -28,11 +28,40 @@ services:
     networks: 
       - app-network
     volumes:
-      - postgres-data:/var/lib/postgressql/data
+      - ./volumes/pgmaster:/var/lib/postgressql/data
     restart: always
 
-volumes:
-  postgres-data:
+  postgres_slave_first:
+    container_name: otuspracticum_postgres_slave_first
+    image: postgres:latest
+    command: -c 'max_connections=1000'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8fSnWajO5G
+      POSTGRES_DB: otuspracticum
+    ports:
+      - "5431:5432"
+    networks: 
+      - app-network
+    volumes:
+      - ./volumes/pgslave:/var/lib/postgresql/data
+    restart: always
+
+  postgres_slave_second:
+    container_name: otuspracticum_postgres_slave_second
+    image: postgres:latest
+    command: -c 'max_connections=1000'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8fSnWajO5G
+      POSTGRES_DB: otuspracticum
+    ports:
+      - "5430:5432"
+    networks: 
+      - app-network
+    volumes:
+      - ./volumes/pgslave_sec:/var/lib/postgresql/data
+    restart: always
 
 networks:
   app-network:

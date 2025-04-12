@@ -16,12 +16,12 @@ namespace OtusPracticum.Models
         public User(Guid id, Dictionary<string, object> data)
         {
             User_id = id;
-            First_name = data[nameof(First_name)].ToString()!;
-            Second_name = data[nameof(Second_name)].ToString()!;
-            Birthdate = data[nameof(Birthdate)].ToString()!;
-            Biography = data[nameof(Biography)].ToString()!;
-            City = data[nameof(City)].ToString()!;
-            Password = data[nameof(Password)].ToString()!;
+            First_name = data["first_name"].ToString()!;
+            Second_name = data["second_name"].ToString()!;
+            Birthdate = data["birthdate"].ToString()!;
+            Biography = data["biography"].ToString()!;
+            City = data["city"].ToString()!;
+            Password = data["password"].ToString()!;
         }
 
         public User() { }

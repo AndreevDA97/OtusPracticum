@@ -26,7 +26,7 @@ namespace OtusPracticum.UsersGenerator
                 {
                     var fields = line.Split(',');
                     var fio = fields[0].Split(' ');
-                    query.AppendLine(@$"INSERT INTO public.""Users""(""User_id"", ""First_name"",""Second_name"",""Birthdate"",""Biography"",""City"",""Password"") 
+                    query.AppendLine(@$"INSERT INTO public.users(user_id, first_name, second_name, birthdate, biography, city, password) 
                         VALUES ('{Guid.NewGuid()}', '{fio[1]}', '{fio[0]}', '{fields[1]}', '{line}', '{fields[2]}', '{PasswordHelper.Hash("12345")}');");
                     i++;
                     Console.WriteLine($"{i}/{lines.Length}");

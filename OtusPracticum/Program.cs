@@ -54,6 +54,8 @@ namespace OtusPracticum
             });
             builder.Services.AddScoped<NpgsqlService>();
             builder.Services.AddTransient<UserService>();
+            builder.Services.AddTransient<FriendService>();
+            builder.Services.AddTransient<PostService>();
             var app = builder.Build();
             app.UseSwagger();
             app.UseSwaggerUI();

@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
+using OtusPracticum.Entities;
 using OtusPracticum.Helpers;
 using OtusPracticum.Models;
 

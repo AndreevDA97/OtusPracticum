@@ -69,7 +69,25 @@ namespace OtusPracticum.Services
                             password character varying(255) NOT NULL,
                             CONSTRAINT pk_users PRIMARY KEY (user_id)
                         );
-                        CREATE INDEX IF NOT EXISTS users_fname_sname_idx ON public.users(first_name varchar_pattern_ops, second_name varchar_pattern_ops);";
+                        CREATE INDEX IF NOT EXISTS users_fname_sname_idx ON public.users(first_name varchar_pattern_ops, second_name varchar_pattern_ops);
+                        CREATE TABLE IF NOT EXISTS public.friends 
+                        (
+                            user_id uuid,
+                            friend_id uuid,
+                            PRIMARY KEY(user_id, friend_id),
+                            FOREIGN KEY (user_id) REFERENCES users (user_id),
+                            FOREIGN KEY (friend_id) REFERENCES users (user_id)
+                        );
+                        CREATE TABLE IF NOT EXISTS public.posts 
+                        (
+                            post_id uuid not null,
+                            user_id uuid not null,
+                            post varchar(2000) not null,
+                            creation_datetime timestamp not null default CURRENT_TIMESTAMP,
+                            PRIMARY KEY(post_id),
+                            FOREIGN KEY (user_id) REFERENCES users (user_id)
+                        );
+                        CREATE INDEX IF NOT EXISTS posts_userid_idx ON public.posts(user_id);";
             ExecuteNonQueryAsync(query, []).Wait();
         }
     }

@@ -13,6 +13,34 @@ services:
       - app-network
     depends_on:
       - postgres_db
+      - redis_cache
+      - kafka_queue
+    restart: always
+
+  otuspracticum_cache_warmup:
+    container_name: otuspracticum_cache_warmup
+    image: ${DOCKER_REGISTRY-}otuspracticum_cache_warmup:latest
+    build:
+      context: .
+      dockerfile: OtusPracticum.СacheWarmup/Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - postgres_db
+      - redis_cache
+
+  otuspracticum_cache_update_service:
+    container_name: otuspracticum_cache_update_service
+    image: ${DOCKER_REGISTRY-}otuspracticum_cache_update_service:latest
+    build:
+      context: .
+      dockerfile: OtusPracticum.CacheUpdateService/Dockerfile
+    networks:
+      - app-network
+    depends_on:
+      - postgres_db
+      - redis_cache
+      - kafka_queue
     restart: always
 
   postgres_db:
@@ -61,6 +89,45 @@ services:
       - app-network
     volumes:
       - ./volumes/pgslave_sec:/var/lib/postgresql/data
+    restart: always
+
+  redis_cache:
+    image: redis:7.4.0
+    container_name: otuspracticum_redis_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./volumes/redisdata:/data
+    networks:
+      - app-network
+    restart: always
+
+  kafka_zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: otuspracticum_kafka_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network
+    restart: always
+   
+  kafka_queue:
+    image: confluentinc/cp-kafka:latest
+    container_name: otuspracticum_kafka_queue
+    depends_on:
+      - kafka_zookeeper
+    networks:
+      - app-network
+    ports:
+      - 29092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: kafka_zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_queue:29092,PLAINTEXT_HOST://127.0.0.1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     restart: always
 
 networks:

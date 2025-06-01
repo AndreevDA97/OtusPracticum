@@ -23,7 +23,7 @@ namespace OtusPracticum.Controllers
         }
 
         [HttpGet, Route("feed"), Authorize]
-        public async Task<ActionResult<Post[]>> GetFeed(int offset = 0, int limit = 1000)
+        public async Task<ActionResult<Post[]>> GetFeed(int offset = 0, int limit = 50)
         {
             var currentUserId = Guid.Parse(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var posts = await postService.GetFeedAsync(currentUserId, offset, limit);

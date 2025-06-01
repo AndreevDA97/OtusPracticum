@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using OtusPracticum.KafkaQueue;
 using OtusPracticum.Middleware.Swagger;
 using OtusPracticum.Services;
 using System.Text;
@@ -15,6 +16,7 @@ namespace OtusPracticum
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
             builder.Services.AddSingleton<IConfiguration>(configuration);
+            builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("KafkaSettings"));
             builder.Services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,10 +54,17 @@ namespace OtusPracticum
                 });
                 o.OperationFilter<SecurityRequirementFilter>(JwtBearerDefaults.AuthenticationScheme);
             });
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
+            });
             builder.Services.AddScoped<NpgsqlService>();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<FriendService>();
+            builder.Services.AddTransient<PostRepository>();
             builder.Services.AddTransient<PostService>();
+            builder.Services.AddSingleton<KafkaClientHandle>();
+            builder.Services.AddSingleton<KafkaProducer<string, string>>();
             var app = builder.Build();
             app.UseSwagger();
             app.UseSwaggerUI();

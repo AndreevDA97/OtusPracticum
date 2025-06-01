@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "OtusPracticum.CacheUpdateService": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

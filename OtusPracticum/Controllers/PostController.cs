@@ -47,7 +47,7 @@ namespace OtusPracticum.Controllers
         }
 
         [HttpPut, Route("update/{post_id}"), Authorize]
-        public async Task<IActionResult> DeletePost(Guid post_id, [FromBody] AddPostRequest request)
+        public async Task<IActionResult> UpdatePost(Guid post_id, [FromBody] AddPostRequest request)
         {
             var currentUserId = Guid.Parse(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             await postService.UpdatePostAsync(post_id, request.Text, currentUserId);

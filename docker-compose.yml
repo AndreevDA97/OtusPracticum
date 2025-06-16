@@ -103,31 +103,45 @@ services:
     restart: always
 
   kafka_zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.8.0
     container_name: otuspracticum_kafka_zookeeper
     environment:
+      ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
       - app-network
+    ports:
+      - 22181:2181
     restart: always
-   
   kafka_queue:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.8.0
     container_name: otuspracticum_kafka_queue
     depends_on:
       - kafka_zookeeper
     networks:
       - app-network
     ports:
-      - 29092:9092
+      - 29092:29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: kafka_zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_queue:29092,PLAINTEXT_HOST://127.0.0.1:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_queue:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: always
+  kafka_ui:
+    image: provectuslabs/kafka-ui
+    container_name: otuspracticum_kafka_ui
+    networks:
+      - app-network
+    ports:
+      - 8090:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka_queue:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=kafka_zookeeper:2181
     restart: always
 
 networks:

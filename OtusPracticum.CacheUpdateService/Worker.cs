@@ -8,6 +8,7 @@ using OtusPracticum.Entities;
 using OtusPracticum.KafkaQueue;
 using OtusPracticum.KafkaQueue.Models;
 using OtusPracticum.Services;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace OtusPracticum.CacheUpdateService
@@ -21,6 +22,10 @@ namespace OtusPracticum.CacheUpdateService
 
         protected override async Task ExecuteAsync(CancellationToken ct)
         {
+            // добавление пустой записи для принудительного создания темы в Kafka
+            //using var producer = new ProducerBuilder<string, string>(GetConsumerConfig()).Build();
+            //producer.Produce("feed-posts", new Message<string, string> { Key = "", Value = "" });
+
             using var consumer = new ConsumerBuilder<string, string>(GetConsumerConfig()).Build();
             consumer.Subscribe("feed-posts");
             while (!ct.IsCancellationRequested)
@@ -34,6 +39,11 @@ namespace OtusPracticum.CacheUpdateService
                         continue;
                     }
                     Console.WriteLine($"Обработка сообщения {consumerResult.Message.Value}; Ключ {consumerResult.Message.Key}");
+                    if (string.IsNullOrEmpty(consumerResult.Message.Value))
+                    {
+                        consumer.StoreOffset(consumerResult);
+                        continue;
+                    }
 
                     var message = JsonSerializer.Deserialize<FeedUpdateMessage>(consumerResult.Message.Value, jsonOptions)!;
                     if (message.ActionType == ActionTypeEnum.FullReload)
@@ -87,13 +97,12 @@ namespace OtusPracticum.CacheUpdateService
                             {
                                 Console.WriteLine($"Обновление поста {message.Post_id}");
                                 var cachedPost = cachedFeed.First(p => p.Post_id == post.Post_id);
-                                cachedPost = post;
+                                cachedFeed[cachedFeed.IndexOf(cachedPost)] = post;
                                 await cache.SetStringAsync(key, JsonSerializer.Serialize(cachedFeed, jsonOptions), ct);
                             }
                         }
                     }
                     consumer.StoreOffset(consumerResult);
-
                 }
                 catch (TaskCanceledException)
                 {
@@ -140,6 +149,7 @@ namespace OtusPracticum.CacheUpdateService
                 EnableAutoOffsetStore = false,
                 EnableAutoCommit = true,
                 EnablePartitionEof = true,
+                AllowAutoCreateTopics = true,
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 BootstrapServers = options.Value.Host
             };

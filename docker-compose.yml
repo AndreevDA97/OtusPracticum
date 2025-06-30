@@ -15,6 +15,7 @@ services:
       - postgres_db
       - redis_cache
       - kafka_queue
+      - chat_service_postgres_master
     restart: always
 
   otuspracticum_cache_warmup:
@@ -143,6 +144,48 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka_queue:9092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=kafka_zookeeper:2181
     restart: always
+
+  chat_service_postgres_master:
+    container_name: chat_service_postgres_master
+    image: "citusdata/citus:12.1.3"
+    ports: 
+        - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 6CUaOWXWSV
+      POSTGRES_DB: chatdb
+    volumes:
+      - ./volumes/pgchatsmaster:/var/lib/postgresql/data
+    networks:
+      - app-network      
+      
+  chat_service_postgres_worker:
+    container_name: chat_service_postgres_worker
+    image: "citusdata/citus:12.1.3"
+    ports: 
+        - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 6CUaOWXWSV
+      POSTGRES_DB: chatdb
+    volumes:
+      - ./volumes/pgchatsworker:/var/lib/postgresql/data  
+    networks:
+      - app-network 
+
+  chat_service_postgres_worker2:
+    container_name: chat_service_postgres_worker2
+    image: "citusdata/citus:12.1.3"
+    ports: 
+        - "5436:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 6CUaOWXWSV
+      POSTGRES_DB: chatdb
+    volumes:
+      - ./volumes/pgchatsworker2:/var/lib/postgresql/data  
+    networks:
+      - app-network
 
 networks:
   app-network:

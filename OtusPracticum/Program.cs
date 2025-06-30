@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
@@ -59,6 +60,11 @@ namespace OtusPracticum
                 options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
             });
             builder.Services.AddScoped<NpgsqlService>();
+            builder.Services.AddKeyedScoped(nameof(NpgsqlDatabase.ChatService), (_, _) =>
+            {
+                return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
+            });
+            builder.Services.AddTransient<ChatService>();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<FriendService>();
             builder.Services.AddTransient<PostRepository>();

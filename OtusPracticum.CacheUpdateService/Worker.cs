@@ -104,12 +104,13 @@ namespace OtusPracticum.CacheUpdateService
                     }
                     consumer.StoreOffset(consumerResult);
                 }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
                 catch (Exception e)
                 {
+                    if (e is TaskCanceledException || e is OperationCanceledException)
+                    {
+                        Console.WriteLine("Shutdown");
+                        break;
+                    }
                     Console.WriteLine(e.ToString());
                 }
             }

@@ -3,15 +3,29 @@ using System.Data;
 
 namespace OtusPracticum.Services
 {
+    public enum NpgsqlDatabase
+    {
+        OtusPracticum,
+        ChatService
+    }
     public class NpgsqlService : IAsyncDisposable, IDisposable
     {
         public NpgsqlMultiHostDataSource Npgsql { get; }
-        public NpgsqlService(IConfiguration configuration)
+        public NpgsqlService(IConfiguration configuration,
+            NpgsqlDatabase database = NpgsqlDatabase.OtusPracticum)
         {
-            var connectionString = configuration.GetConnectionString(nameof(OtusPracticum))
+            var connectionString = configuration.GetConnectionString(database.ToString())
                 ?? throw new Exception("Connection string not found");
             Npgsql = new NpgsqlDataSourceBuilder(connectionString).BuildMultiHost();
-            CreateDbSchema();
+            switch (database)
+            {
+                case NpgsqlDatabase.OtusPracticum:
+                    CreateDbSchema();
+                    break;
+                case NpgsqlDatabase.ChatService:
+                    CreateChatDbSchema();
+                    break;
+            }
         }
 
         public void Dispose()
@@ -88,6 +102,37 @@ namespace OtusPracticum.Services
                             FOREIGN KEY (user_id) REFERENCES users (user_id)
                         );
                         CREATE INDEX IF NOT EXISTS posts_userid_idx ON public.posts(user_id);";
+            ExecuteNonQueryAsync(query, []).Wait();
+        }
+
+        private void CreateChatDbSchema()
+        {
+            var query = @"CREATE TABLE IF NOT EXISTS public.chats
+                        (
+                            chat_id uuid NOT NULL,
+                            chat_name character varying(50) NOT NULL,
+                            creator_id uuid NOT NULL,
+                            creation_datetime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            last_update_datetime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            CONSTRAINT chats_pkey PRIMARY KEY (chat_id)
+                        );
+                        CREATE TABLE IF NOT EXISTS public.chat_users
+                        (
+                            chat_id uuid NOT NULL,
+                            user_id uuid NOT NULL,
+                            creation_datetime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            CONSTRAINT chat_users_pkey PRIMARY KEY (chat_id, user_id),
+                            CONSTRAINT chat_users_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES public.chats (chat_id)
+                        );
+                        CREATE TABLE IF NOT EXISTS public.messages
+                        (
+                            message_id uuid NOT NULL,
+                            chat_id uuid NOT NULL,
+                            user_id uuid NOT NULL,
+                            message character varying(2000) NOT NULL,
+                            creation_datetime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            CONSTRAINT messages_pkey PRIMARY KEY (message_id, chat_id)
+                        );";
             ExecuteNonQueryAsync(query, []).Wait();
         }
     }

@@ -10,6 +10,8 @@ namespace OtusPracticum.Entities
         public string Birthdate { get; set; } = null!;
         public string Biography { get; set; } = null!;
         public string City { get; set; } = null!;
+        public bool? CanPublishMessages { get; set; }
+
         [JsonIgnore]
         public string Password { get; set; } = null!;
 
@@ -22,6 +24,9 @@ namespace OtusPracticum.Entities
             Biography = data["biography"].ToString()!;
             City = data["city"].ToString()!;
             Password = data["password"].ToString()!;
+            CanPublishMessages = data.TryGetValue("can_publish_messages", out object? value)
+                ? Convert.ToBoolean(value)
+                : null;
         }
 
         public User() { }

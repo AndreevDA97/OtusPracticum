@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "OtusPracticum.FeedClient": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

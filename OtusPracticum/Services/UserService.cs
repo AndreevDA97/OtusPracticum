@@ -12,7 +12,7 @@ namespace OtusPracticum.Services
 
         public async Task<User?> GetUserAsync(Guid id)
         {
-            string query = @"SELECT first_name, second_name, birthdate, biography, city, password
+            string query = @"SELECT first_name, second_name, birthdate, biography, city, password, can_publish_messages
                              FROM public.users
                              WHERE user_id = @User_id";
             var parameters = new NpgsqlParameter[]
@@ -20,7 +20,8 @@ namespace OtusPracticum.Services
                 new(nameof(User.User_id), NpgsqlDbType.Uuid) { Value = id }
             };
             var data = await npgsqlService.GetQueryResultAsync(query, parameters,
-                ["first_name", "second_name", "birthdate", "biography", "city", "password"], TargetSessionAttributes.PreferStandby);
+                ["first_name", "second_name", "birthdate", "biography", "city", "password", "can_publish_messages"],
+                TargetSessionAttributes.PreferStandby);
             if (data.Count == 0) return null;
             return new User(id, data[0]);
         }

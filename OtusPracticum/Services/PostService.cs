@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 using NpgsqlTypes;
 using OtusPracticum.Entities;
@@ -9,7 +10,11 @@ using System.Text.Json;
 
 namespace OtusPracticum.Services
 {
-    public class PostService(PostRepository postRepo, IDistributedCache distributedCache, KafkaProducer<string, string> kafkaProducer)
+    public class PostService(
+        PostRepository postRepo, 
+        IDistributedCache distributedCache, 
+        KafkaProducer<string, string> kafkaProducer,
+        FriendService friendService)
     {
         private readonly PostRepository postRepo = postRepo;
         private readonly KafkaProducer<string, string> kafkaProducer = kafkaProducer;
@@ -17,38 +22,50 @@ namespace OtusPracticum.Services
         public async Task<Guid> AddPostAsync(Guid user_id, string post)
         {
             var post_id = await postRepo.AddPostAsync(user_id, post);
-            var message = new Message<string, string>
+            var friends = await friendService.GetFriendsAsync(user_id);
+            foreach (var friend in friends)
             {
-                Key = user_id.ToString(),
-                Value = JsonSerializer.Serialize(new FeedUpdateMessage(ActionTypeEnum.Create, post_id), Consts.JsonSerializerOptions),
-                Timestamp = Timestamp.Default
-            };
-            await kafkaProducer.ProduceAsync("feed-posts", message);
+                var message = new Message<string, string>
+                {
+                    Key = friend.ToString(),
+                    Value = JsonSerializer.Serialize(new FeedUpdateMessage(ActionTypeEnum.Create, post_id, user_id, post), Consts.JsonSerializerOptions),
+                    Timestamp = Timestamp.Default
+                };
+                await kafkaProducer.ProduceAsync("feed-posts", message);
+            }
             return post_id;
         }
 
         public async Task UpdatePostAsync(Guid post_id, string post, Guid user_id)
         {
             await postRepo.UpdatePostAsync(post_id, post, user_id);
-            var message = new Message<string, string>
+            var friends = await friendService.GetFriendsAsync(user_id);
+            foreach (var friend in friends)
             {
-                Key = user_id.ToString(),
-                Value = JsonSerializer.Serialize(new FeedUpdateMessage(ActionTypeEnum.Update, post_id), Consts.JsonSerializerOptions),
-                Timestamp = Timestamp.Default
-            };
-            await kafkaProducer.ProduceAsync("feed-posts", message);
+                var message = new Message<string, string>
+                {
+                    Key = friend.ToString(),
+                    Value = JsonSerializer.Serialize(new FeedUpdateMessage(ActionTypeEnum.Update, post_id, user_id, post), Consts.JsonSerializerOptions),
+                    Timestamp = Timestamp.Default
+                };
+                await kafkaProducer.ProduceAsync("feed-posts", message);
+            }
         }
 
         public async Task DeletePostAsync(Guid post_id, Guid user_id)
         {
             await postRepo.DeletePostAsync(post_id, user_id);
-            var message = new Message<string, string>
+            var friends = await friendService.GetFriendsAsync(user_id);
+            foreach (var friend in friends)
             {
-                Key = user_id.ToString(),
-                Value = JsonSerializer.Serialize(new FeedUpdateMessage(ActionTypeEnum.Delete, post_id), Consts.JsonSerializerOptions),
-                Timestamp = Timestamp.Default
-            };
-            await kafkaProducer.ProduceAsync("feed-posts", message);
+                var message = new Message<string, string>
+                {
+                    Key = friend.ToString(),
+                    Value = JsonSerializer.Serialize(new FeedUpdateMessage(ActionTypeEnum.Delete, post_id, user_id, null), Consts.JsonSerializerOptions),
+                    Timestamp = Timestamp.Default
+                };
+                await kafkaProducer.ProduceAsync("feed-posts", message);
+            }
         }
 
         public async Task<Post?> GetPostAsync(Guid post_id)

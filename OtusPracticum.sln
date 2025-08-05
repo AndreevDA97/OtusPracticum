@@ -22,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OtusPracticum.KafkaQueue", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OtusPracticum.CacheUpdateService", "OtusPracticum.CacheUpdateService\OtusPracticum.CacheUpdateService.csproj", "{1AFD406E-54AA-4F8D-AC17-1D0CB4748229}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OtusPracticum.FeedClient", "OtusPracticum.FeedClient\OtusPracticum.FeedClient.csproj", "{7CDA6483-27EE-449E-BABA-3044BF1FFF93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OtusPracticum.LiveFeedService", "OtusPracticum.LiveFeedService\OtusPracticum.LiveFeedService.csproj", "{3A5C852E-9F18-49FD-B39A-FD14A164AA04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,14 @@ Global
 		{1AFD406E-54AA-4F8D-AC17-1D0CB4748229}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AFD406E-54AA-4F8D-AC17-1D0CB4748229}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AFD406E-54AA-4F8D-AC17-1D0CB4748229}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CDA6483-27EE-449E-BABA-3044BF1FFF93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CDA6483-27EE-449E-BABA-3044BF1FFF93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CDA6483-27EE-449E-BABA-3044BF1FFF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CDA6483-27EE-449E-BABA-3044BF1FFF93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A5C852E-9F18-49FD-B39A-FD14A164AA04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A5C852E-9F18-49FD-B39A-FD14A164AA04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A5C852E-9F18-49FD-B39A-FD14A164AA04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A5C852E-9F18-49FD-B39A-FD14A164AA04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

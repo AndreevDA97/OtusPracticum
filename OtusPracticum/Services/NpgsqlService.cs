@@ -81,6 +81,7 @@ namespace OtusPracticum.Services
                             biography character varying(1000) NOT NULL,
                             city character varying(255) NOT NULL,
                             password character varying(255) NOT NULL,
+                            can_publish_messages bool not null default false,
                             CONSTRAINT pk_users PRIMARY KEY (user_id)
                         );
                         CREATE INDEX IF NOT EXISTS users_fname_sname_idx ON public.users(first_name varchar_pattern_ops, second_name varchar_pattern_ops);

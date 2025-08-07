@@ -6,9 +6,11 @@ using OtusPracticum.Models;
 namespace OtusPracticum.Services
 {
     public class ChatService(
-        [FromKeyedServices(nameof(NpgsqlDatabase.ChatService))] NpgsqlService npgsqlService) : IChatService
+        [FromKeyedServices(nameof(NpgsqlDatabase.ChatService))] NpgsqlService npgsqlService,
+        UserServiceClient userService) : IChatService
     {
         private readonly NpgsqlService npgsqlService = npgsqlService;
+        private readonly UserServiceClient userService = userService;
 
         public async Task<MessageEntity[]> GetChatAsync(Guid chat_id, int limit, int offset, Guid user_id)
         {
@@ -91,6 +93,9 @@ namespace OtusPracticum.Services
                 request.Users_ids.Add(creator_id);
             foreach (var user_id in request.Users_ids)
             {
+                var remoteUser = await userService.GetUserAsync(user_id);
+                if (remoteUser is null) continue;
+
                 parameters =
                 [
                    new("Chat_id", NpgsqlDbType.Uuid) { Value = chat_id },

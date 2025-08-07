@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using OtusPracticum.KafkaQueue;
+using OtusPracticum.Middleware;
 using OtusPracticum.Middleware.Swagger;
 using OtusPracticum.Services;
 using System.Text;
@@ -55,15 +56,20 @@ namespace OtusPracticum
                 });
                 o.OperationFilter<SecurityRequirementFilter>(JwtBearerDefaults.AuthenticationScheme);
             });
-            builder.Services.AddSingleton<NpgsqlService>();
-            //builder.Services.AddStackExchangeRedisCache(options =>
-            //{
-            //    options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
-            //});
-            //builder.Services.AddKeyedScoped(nameof(NpgsqlDatabase.ChatService), (_, _) =>
-            //{
-            //    return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
-            //});
+            builder.Services.AddHttpClient<UserServiceClient>();
+            builder.Services.AddTransient<UserServiceClient>();
+            builder.Services.AddScoped((_) =>
+            {
+                return new NpgsqlService(configuration, NpgsqlDatabase.OtusPracticum);
+            });
+            builder.Services.AddKeyedScoped(nameof(NpgsqlDatabase.ChatService), (_, _) =>
+            {
+                return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
+            });
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
+            });
             builder.Services.AddSingleton<IChatService, RedisChatService>();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<FriendService>();
@@ -72,6 +78,7 @@ namespace OtusPracticum
             builder.Services.AddSingleton<KafkaClientHandle>();
             builder.Services.AddSingleton<KafkaProducer<string, string>>();
             var app = builder.Build();
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseAuthentication();

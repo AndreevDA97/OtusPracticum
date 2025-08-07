@@ -9,11 +9,13 @@ namespace OtusPracticum.Services
     {
         private readonly ConnectionMultiplexer redis;
         private readonly JsonSerializerOptions jsonOptions = new(JsonSerializerDefaults.Web);
+        private readonly UserServiceClient userService;
 
-        public RedisChatService(IConfiguration configuration)
+        public RedisChatService(IConfiguration configuration, UserServiceClient userService)
         {
             var connectionString = configuration.GetConnectionString("RedisCache")!;
             redis = ConnectionMultiplexer.Connect(connectionString);
+            this.userService = userService;
         }
 
         public async Task<Guid> CreateChatAsync(CreateChatRequest request, Guid creator_id)
@@ -43,6 +45,9 @@ namespace OtusPracticum.Services
 
             foreach (var user_id in request.Users_ids)
             {
+                var remoteUser = await userService.GetUserAsync(user_id);
+                if (remoteUser is null) continue;
+
                 var user_chats_res = await db.ExecuteAsync("FCALL", "get_something", 1, $"user_chats-{user_id}");
                 var user_chats_str = user_chats_res.ToString();
 

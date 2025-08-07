@@ -6,7 +6,7 @@ using OtusPracticum.Models;
 namespace OtusPracticum.Services
 {
     public class ChatService(
-        [FromKeyedServices(nameof(NpgsqlDatabase.ChatService))] NpgsqlService npgsqlService)
+        [FromKeyedServices(nameof(NpgsqlDatabase.ChatService))] NpgsqlService npgsqlService) : IChatService
     {
         private readonly NpgsqlService npgsqlService = npgsqlService;
 
@@ -30,7 +30,7 @@ namespace OtusPracticum.Services
             return data.Select(d => new MessageEntity(chat_id, d)).ToArray();
         }
 
-        public async Task<Chat[]> GetUserChatListAsync(Guid user_id, int limit, int offset)
+        public async Task<List<Chat>> GetUserChatListAsync(Guid user_id, int limit, int offset)
         {
             string query = @"SELECT c.chat_id, c.creator_id, c.creation_datetime, c.chat_name, c.last_update_datetime  
                              FROM public.chat_users cu
@@ -45,7 +45,7 @@ namespace OtusPracticum.Services
                 new("Offset", NpgsqlDbType.Integer) { Value = offset }
             };
             var data = await npgsqlService.GetQueryResultAsync(query, parameters, ["chat_id", "creator_id", "creation_datetime", "chat_name", "last_update_datetime"]);
-            return data.Select(d => new Chat(d)).ToArray();
+            return data.Select(d => new Chat(d)).ToList();
         }
 
         public async Task<Guid> SendMessageToChatAsync(Guid chat_id, SendMessageRequest request, Guid creator_id)

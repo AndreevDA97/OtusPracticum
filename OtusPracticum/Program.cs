@@ -55,16 +55,16 @@ namespace OtusPracticum
                 });
                 o.OperationFilter<SecurityRequirementFilter>(JwtBearerDefaults.AuthenticationScheme);
             });
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
-            });
-            builder.Services.AddScoped<NpgsqlService>();
-            builder.Services.AddKeyedScoped(nameof(NpgsqlDatabase.ChatService), (_, _) =>
-            {
-                return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
-            });
-            builder.Services.AddTransient<ChatService>();
+            builder.Services.AddSingleton<NpgsqlService>();
+            //builder.Services.AddStackExchangeRedisCache(options =>
+            //{
+            //    options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
+            //});
+            //builder.Services.AddKeyedScoped(nameof(NpgsqlDatabase.ChatService), (_, _) =>
+            //{
+            //    return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
+            //});
+            builder.Services.AddSingleton<IChatService, RedisChatService>();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<FriendService>();
             builder.Services.AddTransient<PostRepository>();

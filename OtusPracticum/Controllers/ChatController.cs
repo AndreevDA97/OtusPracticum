@@ -9,9 +9,9 @@ namespace OtusPracticum.Controllers
 {
     [ApiController]
     [Route("api/dialog"), Authorize]
-    public class ChatController(ChatService chatService) : ControllerBase
+    public class ChatController(IChatService chatService) : ControllerBase
     {
-        private readonly ChatService chatService = chatService;
+        private readonly IChatService chatService = chatService;
 
         [HttpGet, Route("{chat_id}/messages")]
         public async Task<ActionResult<MessageEntity[]>> GetChatAsync(Guid chat_id, int limit = 1000, int offset = 0)

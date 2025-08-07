@@ -64,7 +64,7 @@ namespace OtusPracticum
             {
                 return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
             });
-            builder.Services.AddSingleton<ChatService>();
+            builder.Services.AddTransient<ChatService>();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<FriendService>();
             builder.Services.AddTransient<PostRepository>();

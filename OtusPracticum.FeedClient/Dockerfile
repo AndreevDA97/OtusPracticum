@@ -12,6 +12,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["OtusPracticum.FeedClient/OtusPracticum.FeedClient.csproj", "OtusPracticum.FeedClient/"]
 COPY ["OtusPracticum/OtusPracticum.csproj", "OtusPracticum/"]
+COPY ["OtusPracticum.KafkaQueue/OtusPracticum.KafkaQueue.csproj", "OtusPracticum.KafkaQueue/"]
 RUN dotnet restore "./OtusPracticum.FeedClient/OtusPracticum.FeedClient.csproj"
 COPY . .
 WORKDIR "/src/OtusPracticum.FeedClient"

@@ -11,7 +11,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["OtusPracticum.FeedClient/OtusPracticum.FeedClient.csproj", "OtusPracticum.FeedClient/"]
-COPY ["OtusPracticum/OtusPracticum.csproj", "OtusPracticum/"]
+COPY ["OtusPracticum.UserAPI/OtusPracticum.UserAPI.csproj", "OtusPracticum.UserAPI/"]
 COPY ["OtusPracticum.KafkaQueue/OtusPracticum.KafkaQueue.csproj", "OtusPracticum.KafkaQueue/"]
 RUN dotnet restore "./OtusPracticum.FeedClient/OtusPracticum.FeedClient.csproj"
 COPY . .

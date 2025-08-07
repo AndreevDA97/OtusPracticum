@@ -18,7 +18,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OtusPracticum.KafkaQueue\OtusPracticum.KafkaQueue.csproj" />
-    <ProjectReference Include="..\OtusPracticum\OtusPracticum.csproj" />
+    <ProjectReference Include="..\OtusPracticum.NpgsqlService\OtusPracticum.NpgsqlService.csproj" />
+    <ProjectReference Include="..\OtusPracticum.UserAuthService\OtusPracticum.UserAuthService.csproj" />
+    <ProjectReference Include="..\OtusPracticum.UserDatabase\OtusPracticum.UserDatabase.csproj" />
   </ItemGroup>
 
 </Project>

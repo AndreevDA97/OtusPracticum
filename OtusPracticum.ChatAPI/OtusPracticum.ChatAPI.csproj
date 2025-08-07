@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ef34a553-0514-4da5-964d-474a5aac5840</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.27" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OtusPracticum.ChatDatabase\OtusPracticum.ChatDatabase.csproj" />
+    <ProjectReference Include="..\OtusPracticum.NpgsqlService\OtusPracticum.NpgsqlService.csproj" />
+    <ProjectReference Include="..\OtusPracticum.WebCommon\OtusPracticum.WebCommon.csproj" />
+  </ItemGroup>
+
+</Project>

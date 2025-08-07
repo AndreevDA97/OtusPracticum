@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OtusPracticum\OtusPracticum.csproj" />
+    <ProjectReference Include="..\OtusPracticum.UserAuthService\OtusPracticum.UserAuthService.csproj" />
   </ItemGroup>
 
 </Project>

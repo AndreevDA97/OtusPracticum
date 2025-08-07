@@ -1,25 +1,26 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System.Data;
 
 namespace OtusPracticum.Services
 {
     public enum NpgsqlDatabase
     {
-        OtusPracticum,
+        UserService,
         ChatService
     }
     public class NpgsqlService : IAsyncDisposable, IDisposable
     {
         public NpgsqlMultiHostDataSource Npgsql { get; }
         public NpgsqlService(IConfiguration configuration,
-            NpgsqlDatabase database = NpgsqlDatabase.OtusPracticum)
+            NpgsqlDatabase database = NpgsqlDatabase.UserService)
         {
             var connectionString = configuration.GetConnectionString(database.ToString())
                 ?? throw new Exception("Connection string not found");
             Npgsql = new NpgsqlDataSourceBuilder(connectionString).BuildMultiHost();
             switch (database)
             {
-                case NpgsqlDatabase.OtusPracticum:
+                case NpgsqlDatabase.UserService:
                     CreateDbSchema();
                     break;
                 case NpgsqlDatabase.ChatService:

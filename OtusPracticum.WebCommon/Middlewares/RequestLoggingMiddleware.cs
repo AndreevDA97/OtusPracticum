@@ -1,8 +1,10 @@
-﻿using OtusPracticum.Models;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using OtusPracticum.Models;
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace OtusPracticum.Middleware
+namespace OtusPracticum.Middlewares
 {
     public class RequestLoggingMiddleware(RequestDelegate next)
     {

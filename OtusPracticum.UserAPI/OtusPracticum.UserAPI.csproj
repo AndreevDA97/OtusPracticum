@@ -13,13 +13,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.16" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Npgsql" Version="8.0.6" />
-    <PackageReference Include="StackExchange.Redis" Version="2.7.27" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OtusPracticum.NpgsqlService\OtusPracticum.NpgsqlService.csproj" />
     <ProjectReference Include="..\OtusPracticum.KafkaQueue\OtusPracticum.KafkaQueue.csproj" />
+    <ProjectReference Include="..\OtusPracticum.UserDatabase\OtusPracticum.UserDatabase.csproj" />
+    <ProjectReference Include="..\OtusPracticum.WebCommon\OtusPracticum.WebCommon.csproj" />
   </ItemGroup>
 
 </Project>

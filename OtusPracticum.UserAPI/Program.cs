@@ -4,8 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using OtusPracticum.KafkaQueue;
-using OtusPracticum.Middleware;
-using OtusPracticum.Middleware.Swagger;
+using OtusPracticum.Middlewares;
+using OtusPracticum.Middlewares.Swagger;
 using OtusPracticum.Services;
 using System.Text;
 
@@ -56,21 +56,11 @@ namespace OtusPracticum
                 });
                 o.OperationFilter<SecurityRequirementFilter>(JwtBearerDefaults.AuthenticationScheme);
             });
-            builder.Services.AddHttpClient<UserServiceClient>();
-            builder.Services.AddTransient<UserServiceClient>();
-            builder.Services.AddScoped((_) =>
-            {
-                return new NpgsqlService(configuration, NpgsqlDatabase.OtusPracticum);
-            });
-            builder.Services.AddKeyedScoped(nameof(NpgsqlDatabase.ChatService), (_, _) =>
-            {
-                return new NpgsqlService(configuration, NpgsqlDatabase.ChatService);
-            });
             builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = builder.Configuration.GetConnectionString("RedisCache");
             });
-            builder.Services.AddSingleton<IChatService, RedisChatService>();
+            builder.Services.AddSingleton(_ => new NpgsqlService(configuration, NpgsqlDatabase.UserService));
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<FriendService>();
             builder.Services.AddTransient<PostRepository>();

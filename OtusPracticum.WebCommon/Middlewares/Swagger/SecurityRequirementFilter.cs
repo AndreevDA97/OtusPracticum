@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace OtusPracticum.Middleware.Swagger
+namespace OtusPracticum.Middlewares.Swagger
 {
     public class SecurityRequirementFilter(string apiRefIds) : IOperationFilter
     {

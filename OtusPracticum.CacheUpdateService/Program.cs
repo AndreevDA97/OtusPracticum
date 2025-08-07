@@ -17,7 +17,7 @@ namespace OtusPracticum.CacheUpdateService
                     services.AddOptions();
                     services.Configure<KafkaSettings>(hostContext.Configuration.GetSection("KafkaSettings"));
                     services.Configure<UserAuthServiceOptions>(hostContext.Configuration.GetSection("AuthService"));
-                    services.AddSingleton<NpgsqlService>();
+                    services.AddSingleton(_ => new NpgsqlService(hostContext.Configuration, NpgsqlDatabase.UserService));
                     services.AddHttpClient<UserAuthService>();
                     services.AddSingleton<UserAuthService>();
                     services.AddTransient<PostRepository>();

@@ -12,7 +12,7 @@ namespace OtusPracticum.СacheWarmup
             var app = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddScoped<NpgsqlService>();
+                    services.AddScoped(_ => new NpgsqlService(hostContext.Configuration, NpgsqlDatabase.UserService));
                     services.AddScoped<CacheWormuper>();
                     services.AddStackExchangeRedisCache(options =>
                     {
